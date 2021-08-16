@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run project",
+            "type": "shell",
+            "command": "julia --project=.  -e 'push!(LOAD_PATH, joinpath(pwd(), \"..\")); include(\"src/Sound.jl\")'",
+            "problemMatcher": []
+        }
+    ],
+}
