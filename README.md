@@ -1,6 +1,8 @@
 # Sounds
 
-A simple Sound API to play sound files in julia.
+[Sounds](#) is a simple Sound API to play audio files in julia. It uses the
+[CSFML](https://github.com/JuliaMultimedia/CSFML.jl) package to manage the
+sound interface.
 
 ## License
 
