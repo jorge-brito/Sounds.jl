@@ -24,6 +24,14 @@ mutable struct Sound <: AbstractSound{sfSound}
     end
 end
 
+function getbuffer(sound::Sound)
+    if !isnothing(sound.buffer)
+        return sound.buffer
+    else
+        error("sound object doesn't have a SoundBuffer")
+    end
+end
+
 destroy!(sound::Sound) = sfSound_destroy(sound)
 """
         setbuffer!(sound, buffer::SoundBuffer) -> Nothing
@@ -54,11 +62,11 @@ play!(sound::Sound)  = sfSound_play(sound)
 stop!(sound::Sound)  = sfSound_stop(sound)
 pause!(sound::Sound) = sfSound_pause(sound)
 
-nchannels(this::Sound)    = nchannels(this.buffer)
-duration(this::Sound)     = duration(this.buffer)
-getsamples(this::Sound)   = getsamples(this.buffer)
-nsamples(this::Sound)     = nsamples(this.buffer)
-samplerate(this::Sound)   = samplerate(this.buffer)
+nchannels(this::Sound)    = nchannels(getbuffer(this))
+duration(this::Sound)     = duration(getbuffer(this))
+getsamples(this::Sound)   = getsamples(getbuffer(this))
+nsamples(this::Sound)     = nsamples(getbuffer(this))
+samplerate(this::Sound)   = samplerate( getbuffer(this))
 
 isplaying(sound::Sound) = getstatus(sound) == :playing
 ispaused(sound::Sound)  = getstatus(sound) == :paused
@@ -82,3 +90,17 @@ function Base.show(io::IO, sound::Sound)
     sr = round(1e-3 * samplerate(sound), digits = 1)
     print(io, "Sound ♫ $(d)s ($(sr)kHz, $(n)-channels)")
 end
+
+Base.getindex(sound::Sound, idx...) = getindex(getbuffer(sound), idx...)
+
+Base.size(sound::Sound) = size(getbuffer(sound))
+Base.length(sound::Sound) = length(getbuffer(sound))
+
+Base.firstindex(::SoundBuffer) = firstindex(getbuffer(sound))
+Base.lastindex(sound::Sound) = lastindex(getbuffer(sound))
+
+Base.first(sound::Sound) = first(getbuffer(sound))
+Base.last(sound::Sound)  = last(getbuffer(sound))
+
+FFTW.fft(sound::Sound) = fft(getbuffer(sound)[:])
+FFTW.ifft(sound::Sound) = ifft(getbuffer(sound)[:])

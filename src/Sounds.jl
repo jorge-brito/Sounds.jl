@@ -1,6 +1,7 @@
 module Sounds
 
 using CSFML, CSFML.LibCSFML
+using FFTW
 
 export AbstractSound
 export SoundObject
@@ -12,6 +13,7 @@ export SoundBuffer
 export duration
 export getsamples
 export getstatus
+export getbuffer
 export islooping
 export ispaused
 export isplaying
