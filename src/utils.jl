@@ -6,6 +6,13 @@ const Status = Dict(
     sfStopped => :stopped,
 )
 
-const ms = 1
-const s = 1000
-const m = 60s
+function showprops(sound::AbstractSound)
+    for (name, value) in pairs(getprops(sound))
+        println("$name: $value")
+    end
+end
+
+function timeToSamples(pos, samplerate, channels)
+    samples = ((pos * samplerate * channels) + 500000) / 1e6
+    return floor(Int, samples)
+end
