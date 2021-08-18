@@ -17,48 +17,43 @@ end
 
 destroy!(this::Music) = sfMusic_destroy(this)
 
-offset!(music::Music, offset::Integer)  = sfMusic_setPlayingOffset(music, sfTime(offset * 10e2))
-volume!(music::Music, volume::Real)     = sfMusic_setVolume(music, volume)
-loop!(music::Music, loop::Bool)         = sfMusic_setLoop(music, loop ? sfTrue : sfFalse)
-pitch!(music::Music, pitch::Real)       = sfMusic_setPitch(music, pitch)
+timepos!(music::Music, offset::Integer)  = sfMusic_setPlayingOffset(music, sfTime(offset))
+volume!(music::Music, volume::Real)      = sfMusic_setVolume(music, volume)
+loop!(music::Music, loop::Bool)          = sfMusic_setLoop(music, loop ? sfTrue : sfFalse)
+pitch!(music::Music, pitch::Real)        = sfMusic_setPitch(music, pitch)
 
-volume(music::Music) = sfMusic_getVolume(music)
-status(music::Music) = Status[ sfMusic_getStatus(music) ]
-loop(music::Music)   = sfMusic_getLoop(music) == sfTrue
-pitch(music::Music)  = sfMusic_getPitch(music)
-offset(music::Music)  = sfMusic_getPlayingOffset(music).microseconds / 10e2
+volume(music::Music)    = sfMusic_getVolume(music)
+getstatus(music::Music) = Status[ sfMusic_getStatus(music) ]
+pitch(music::Music)     = sfMusic_getPitch(music)
+timepos(music::Music)   = sfMusic_getPlayingOffset(music).microseconds
+islooping(music::Music) = sfMusic_getLoop(music) == sfTrue
 
 play!(music::Music)  = sfMusic_play(music)
 stop!(music::Music)  = sfMusic_stop(music)
 pause!(music::Music) = sfMusic_pause(music)
 
-duration(music::Music)     = sfMusic_getDuration(music).microseconds / 10e2
-samplerate(music::Music)   = sfMusic_getSampleRate(music)
+isplaying(music::Music) = getstatus(music) == :playing
+ispaused(music::Music)  = getstatus(music) == :paused
+isstopped(music::Music) = getstatus(music) == :stopped
 
-const MusicProps = (
-    :status,
-    :volume,
-    :loop,
-    :pitch,
-    :duration,
-    :samplerate,
-    :offset,
+nchannels(music::Music)  = Int(sfMusic_getChannelCount(music))
+duration(music::Music)   = sfMusic_getDuration(music).microseconds
+samplerate(music::Music) = Int(sfMusic_getSampleRate(music))
+
+getprops(music::Music) = (
+    loop = islooping(music),
+    status = getstatus(music),
+    timepos = timepos(music),
+    volume = volume(music),
+    pitch = pitch(music),
+    channels = nchannels(music),
+    duration = duration(music),
+    samplerate = samplerate(music),
 )
 
-Base.show(io::IO, ::Music) = print(io, "Music ♫")
-
-function showprops(music::Music)
-    lines = String[""] 
-    for prop in MusicProps
-        value = music |> getfield(Sounds, prop)
-        line = ""
-        if prop == :status
-            emoji = value == :playing ? "▶️" : value == :stopped ? "⏹" : "⏸"
-            line *= "status: $value $emoji"
-        else
-            line *= "$prop: $value"
-        end
-        push!(lines, line)
-    end
-    println(join(lines, "\n"))
+function Base.show(io::IO, music::Music)
+    d = round(1e-6 * duration(music), digits = 2)
+    n = nchannels(music)
+    sr = round(1e-3 * samplerate(music), digits = 1)
+    print(io, "Music ♫ $(d)s ($(sr)kHz, $(n)-channels)")
 end
