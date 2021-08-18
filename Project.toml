@@ -1,17 +1,17 @@
 name = "Sounds"
 uuid = "cb14f48e-3594-4fa7-b2ec-7dc1508260e5"
 authors = ["Jorge Brito <jorge.brito.json@gmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 CSFML = "538df835-4bef-5bfa-b281-4025a4f7e8ff"
+FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
 
 [compat]
 julia = "1"
 
 [extras]
-FFTW = "7a1cc6ca-52ef-59f5-83cd-3a7055c09341"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "FFTW"]
+test = ["Test"]
