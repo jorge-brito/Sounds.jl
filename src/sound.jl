@@ -96,7 +96,7 @@ Base.getindex(sound::Sound, idx...) = getindex(getbuffer(sound), idx...)
 Base.size(sound::Sound) = size(getbuffer(sound))
 Base.length(sound::Sound) = length(getbuffer(sound))
 
-Base.firstindex(::SoundBuffer) = firstindex(getbuffer(sound))
+Base.firstindex(sound::Sound) = firstindex(getbuffer(sound))
 Base.lastindex(sound::Sound) = lastindex(getbuffer(sound))
 
 Base.first(sound::Sound) = first(getbuffer(sound))
